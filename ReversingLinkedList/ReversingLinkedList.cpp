@@ -44,17 +44,23 @@ List SortList(List L)
 {
 	Position PHead;
 	Position PTail;
+	Position TempCell;
+	List NewList;
 	int HeadAddress;
 	int TailAddress;
 
+	NewList = (List)malloc(sizeof(struct Node));
+	
 	HeadAddress = L->NextAddress;				//标记首节点的地址
-	PTail = L->NextPosition;
+	PTail = L;
 	//找出尾节点
 	while (PTail != NULL)
 	{
-		if (PTail->NextAddress < 0)
+		if (PTail->NextPosition->NextAddress < 0)
 		{
-			TailAddress = PTail->Address;
+			TailAddress = PTail->NextPosition->Address;
+			NewList->NextPosition = PTail->NextPosition;
+
 		}
 		PTail = PTail->NextPosition;
 	}
