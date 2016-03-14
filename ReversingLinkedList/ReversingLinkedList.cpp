@@ -1,4 +1,26 @@
-#include "ReversingLinkedList.h"
+#include <stdio.h>
+#include <malloc.h>
+
+typedef struct Node* PtrToNode;
+typedef PtrToNode	 List;
+typedef PtrToNode	 Position;
+
+List CreatLinkedList(int firstAddress, int length, List L);
+void TravalList(List L);
+List SortList(List L);
+Position FindPeriousPosition(List L, int Data);
+void DeletePosition(List L, int Data);
+List ReversingList(List L, int K);
+int LengthList(List L);
+
+
+struct Node
+{
+	int Address;
+	int Data;
+	int NextAddress;
+	Position NextPosition;
+};
 
 int main()
 {
@@ -9,15 +31,31 @@ int main()
 	List L;
 	L = (List)malloc(sizeof(struct Node));
 
+	//输入首地址，节点个数，第几个值反转
 	scanf("%d %d %d", &firstAddress, &length, &changeList);
 	L->NextAddress = firstAddress;
 	L->NextPosition = NULL;
 
+	//创建链表
 	L = CreatLinkedList(firstAddress, length, L);
 
+	//将节点链接成链表
 	L = SortList(L);
-	TravalList(L);
-
+	if (changeList == 1)
+	{
+		TravalList(L);
+		return 0;
+	}
+	else
+	{
+		//反转，交换节点的地址
+		L = ReversingList(L, changeList);
+		//再次排序
+		L = SortList(L);
+		//printf("\n");
+		TravalList(L);
+	}
+	
 	free(L);
 	return  0;
 }
@@ -26,15 +64,47 @@ int main()
 List ReversingList(List L, int K)
 {
 	Position PTail;
+	int temp = 0;
+	int len = 0;
+	PTail = L;
 
+	len = LengthList(L);
+	
 	//如果K超过了链表的长度
-	if (K > LengthList(L))
-		return L;
-
-
-	for (int i = 0; i < K; i++)
+	if (K == 1)
 	{
+		return L;
+	}
+	else if (K >= len)
+	{
+		PTail = L->NextPosition;
+		while (PTail->NextPosition != NULL)
+		{
+			temp = PTail->Address;
+			PTail = PTail->NextPosition;
+			PTail->NextAddress = temp;
+		}
 
+		L->NextAddress = PTail->Address;
+		L->NextPosition->NextAddress = -1;
+	}
+	else
+	{
+		//还需加上每隔k个值反转一次
+		for (int i = 1; i < K; i++)
+		{
+			PTail = PTail->NextPosition;
+			temp = PTail->Address;
+			PTail->NextPosition->NextAddress = temp;
+
+			//交换完前面的地址值后，再换第一个和最后一个的地址值
+			if (i == K - 1)
+			{
+				PTail = PTail->NextPosition;
+				L->NextAddress = PTail->Address;
+				L->NextPosition->NextAddress = PTail->NextPosition->Address;
+			}
+		}
 	}
 	return L;
 }
@@ -73,7 +143,6 @@ List CreatLinkedList(int firstAddress, int length, List L)
 		LTail = PNew;
 	}
 
-	//free(PNew);
 	return L;
 }
 
@@ -94,9 +163,13 @@ List SortList(List L)
 	HeadAddress = L->NextAddress;				//标记首节点的地址
 	PTail = L;
 
-	while ( HeadAddress != -1)
+	if (1 == LengthList(L))
+		return L;
+
+	while ( HeadAddress != -1 && PTail->NextPosition != NULL)
 	{	
-		if (HeadAddress == PTail->Address)		//如果节点对应的是尾结点的下个一地址
+		PTail = PTail->NextPosition;
+		if (HeadAddress == PTail->Address)						//如果节点对应的是尾结点的下个一地址
 		{
 			TempCell = (Position)malloc(sizeof(struct Node));
 			//将该节点添加到新的链表
@@ -109,11 +182,10 @@ List SortList(List L)
 			TempCell->NextPosition = NULL;
 			
 			PTail = L;											//每找到一个节点，复位旧链表的指针
-		}
-		
-		PTail = PTail->NextPosition;
+		}	
 	}
 
+	free(L);												   //释放多余节点的空间
 	return NewList;
 }
 
@@ -127,14 +199,13 @@ void DeletePosition(List L, int Data)
 	TempCell = P->NextPosition;
 	P->NextPosition = TempCell->NextPosition;
 	//free(TempCell);	
-
 }
 
 //找出被删除节点的上一个节点
 Position FindPeriousPosition(List L, int Data)
 {
 	Position PPerious;
-	
+
 	PPerious = L;
 	
 	while (PPerious->NextPosition != NULL && PPerious->NextPosition->Data != Data)
@@ -153,6 +224,6 @@ void TravalList(List L)
 		printf("%05d %d %05d\n", P->Address, P->Data, P->NextAddress);
 		P = P->NextPosition;
 	}
-	printf("%05d %d %d\n", P->Address, P->Data, P->NextAddress);
-	printf("\n");
+	printf("%05d %d %d", P->Address, P->Data, P->NextAddress);
+	//printf("\n");
 }
