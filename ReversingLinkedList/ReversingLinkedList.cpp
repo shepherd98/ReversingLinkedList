@@ -15,10 +15,14 @@ int main()
 
 	L = CreatLinkedList(firstAddress, length, L);
 	TravalList(L);
+
+	L = SortList(L);
+	TravalList(L);
 	free(L);
 	return  0;
 }
 
+//创建链表
 List CreatLinkedList(int firstAddress, int length, List L)
 {
 	Position PNew;
@@ -40,34 +44,42 @@ List CreatLinkedList(int firstAddress, int length, List L)
 	return L;
 }
 
+//给链表排序
 List SortList(List L)
 {
-	Position PHead;
 	Position PTail;
+	Position PNewTail;
 	Position TempCell;
 	List NewList;
 	int HeadAddress;
 	int TailAddress;
 
-	NewList = (List)malloc(sizeof(struct Node));
-	
+	NewList = (List)malloc(sizeof(struct Node));//为新的链表分配空间
+	PNewTail = NewList;							
 	HeadAddress = L->NextAddress;				//标记首节点的地址
 	PTail = L;
 	//找出尾节点
-	while (PTail != NULL)
+	while (PTail->NextPosition != NULL && HeadAddress != -1)
 	{
-		if (PTail->NextPosition->NextAddress < 0)
+		if (HeadAddress == PTail->NextPosition->Address)		//如果节点对应的是尾结点的下个一地址
 		{
-			TailAddress = PTail->NextPosition->Address;
-			NewList->NextPosition = PTail->NextPosition;
-
+			TempCell = (Position)malloc(sizeof(struct Node));
+			//将该节点添加到新的链表
+			TempCell = PTail->NextPosition;
+			HeadAddress = TempCell->NextAddress;				//下一个地址作为头地址
+			PNewTail->NextPosition = TempCell;
+			PTail->NextPosition = TempCell->NextPosition;		//删除旧的结点
+			TempCell->NextPosition = NULL;
+			PNewTail = TempCell;
 		}
-		PTail = PTail->NextPosition;
+		
+		//
 	}
 
-	return L;
+	return NewList;
 }
 
+//遍历链表
 void TravalList(List L)
 {
 	Position P;
