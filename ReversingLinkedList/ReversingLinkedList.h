@@ -13,6 +13,8 @@ void TravalList(List L);
 List SortList(List L);
 Position FindPeriousPosition(List L, int Data);
 void DeletePosition(List L, int Data);
+List ReversingList(List L, int K);
+int LengthList(List L);
 
 #endif
 

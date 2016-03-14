@@ -22,6 +22,39 @@ int main()
 	return  0;
 }
 
+//反转链表
+List ReversingList(List L, int K)
+{
+	Position PTail;
+
+	//如果K超过了链表的长度
+	if (K > LengthList(L))
+		return L;
+
+
+	for (int i = 0; i < K; i++)
+	{
+
+	}
+	return L;
+}
+
+//求链表深度
+int LengthList(List L)
+{
+	int count = 0;
+	Position PTail;
+
+	PTail = L;
+	while (PTail->NextPosition != NULL)
+	{
+		count++;
+		PTail = PTail->NextPosition;
+	}
+
+	return count;
+}
+
 //创建链表
 List CreatLinkedList(int firstAddress, int length, List L)
 {
