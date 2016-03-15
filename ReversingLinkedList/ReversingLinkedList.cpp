@@ -49,12 +49,10 @@ int main()
 	else
 	{
 		//反转，交换节点的地址
-		printf("反转\n");
 		L = ReversingList(L, changeList);
 		//再次排序
-		//L = SortList(L);
-		//printf("\n");
-		//TravalList(L);
+		L = SortList(L);
+		TravalList(L);
 	}
 	
 	free(L);
@@ -66,12 +64,16 @@ List ReversingList(List L, int K)
 {
 	Position PTail;
 	int temp = 0;
+	int addressTemp = 0;
 	int len = 0;
 	int times = 0;
+	int remainder = 0;
+	Position PSign;
+	Position LastSign;
 
 	PTail = L;
 	len = LengthList(L);
-	
+	PSign = L;
 	//如果K超过了链表的长度
 	if (K == 1)
 	{
@@ -94,7 +96,7 @@ List ReversingList(List L, int K)
 	{
 		//还需加上每隔k个值反转一次
 		times = len / K;
-
+		remainder = len % K;
 		for (int j = 0; j < times; j++)
 		{
 			for (int i = 1; i < K; i++)
@@ -102,19 +104,38 @@ List ReversingList(List L, int K)
 				PTail = PTail->NextPosition;
 				temp = PTail->Address;
 				PTail->NextPosition->NextAddress = temp;
+				if (i == 1)
+				{
+					PSign = PTail;
+				}
 
-				//交换完前面的地址值后，再换第一个和最后一个的地址值
-#if 0
 				if (i == K - 1)
 				{
-					PTail = PTail->NextPosition;
-					L->NextAddress = PTail->Address;
-					L->NextPosition->NextAddress = PTail->NextPosition->Address;
-				}
-#endif		
+					addressTemp = PTail->NextPosition->Address;
+				}			
+			}	
+			//将头结点与下一个节点连接
+			if (j == 0)
+			{
+				L->NextAddress = addressTemp;
+				LastSign = PSign;
 			}
+			else
+			{
+				LastSign->NextAddress = addressTemp;
+				LastSign = PSign;
+			}
+
+			if (j == times - 1)
+			{
+				if (remainder == 0)
+					PSign->NextAddress = -1;
+				else
+					PSign->NextAddress = PTail->NextPosition->NextPosition->Address;
+			}
+			
+			PTail = PTail->NextPosition;
 		}
-		TravalList(L);
 	}
 	return L;
 }
